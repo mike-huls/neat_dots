@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+</body>
+</html>
+
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="#" />
+    <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/p5.dom.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/p5.sound.js"></script>
+    <!-- <script language="javascript" src="libraries/Box2d.js"></script> -->
+
+    <script language="javascript" type="text/javascript" src="sketch.js"></script>
+    <script language="javascript" type="text/javascript" src="Goal.js"></script>
+    <script language="javascript" type="text/javascript" src="Obstacles.js"></script>
+    <script language="javascript" type="text/javascript" src="ConnectionGene.js"></script>
+    <script language="javascript" type="text/javascript" src="ConnectionHistory.js"></script>
+    <script language="javascript" type="text/javascript" src="Node.js"></script>
+    <script language="javascript" type="text/javascript" src="Player.js"></script>
+    <script language="javascript" type="text/javascript" src="Population.js"></script>
+    <script language="javascript" type="text/javascript" src="Species.js"></script>
+    <script language="javascript" type="text/javascript" src="Genome.js"></script>
+
+
+
+</head>
+<body>
+    <!-- Jquery bootstrap again for navtabs -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <!-- Bootstrap import -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <div id = "main">
+        <div id = "canvas">
+        </div>
+        
+        <div class="btn-group btn-group-justified">
+            <a href="#" class="btn btn-primary" id="btn_o" onclick="menuButton('o')">Add obstacle</a>
+            <a href="#" class="btn btn-primary" id="btn_p" onclick="menuButton('p')">Play</a>
+            <a href="#" class="btn btn-primary" id="btn_n" onclick="menuButton('n')">Hide graphics</a>
+            <a></a>
+            <a href="#" class="btn btn-primary" id="btn_rb" onclick="menuButton('rb')">run best</a>
+            <a href="#" class="btn btn-primary" id="btn_g" onclick="menuButton('g')">see best of each generation</a>
+            <!-- <a href="#" class="btn btn-primary" onclick="menuButton('sb')">show best</a> -->
+            <!-- <a href="#" class="btn btn-primary" onclick="menuButton('h')">human player</a> -->
+        </div>
+        
+
+
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#basicExampleModal" style="position: absolute; padding: 0; margin: 0; right: 0px;">
+           <img id="btn_info" src="http://pyoneer.nl/images/infobutton.png" style="width: 45px;max-width: 45px; padding: 5px;">
+        </button>
+    </div>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Welcome to DOTS!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          
+          <div class="modal-body">
+
+            <!--  -->
+            <div id="exTab2" class="container"> 
+
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <!-- <a  href="#1" data-toggle="tab">Intro and goal</a> -->
+                        <button class="btn btn-outline-dark active" href="#1" data-toggle="tab" style="margin: 5px 5px;">Intro and goal</button>
+                    </li>
+                    <li>
+                        <!-- <a href="#2" data-toggle="tab">Instructions</a> -->
+                        <button class="btn btn-outline-dark" href="#2" data-toggle="tab" style="margin: 5px 5px;">Instructions</button>
+                    </li>
+                    <li>
+                        <!-- <a href="#3" data-toggle="tab">How it works</a> -->
+                        <button class="btn btn-outline-dark" href="#3" data-toggle="tab" style="margin: 5px 5px;">How it works</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content ">
+                    <div class="tab-pane active" id="1">
+                        <p>DOTS is a implementation of a self-learning genetic algorithm called <a href="http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf" target="_blank">NEAT (NeuroEvolution of Augmenting Topologies)</a>, developed by Ken Stanley. It alters both the weighting parameters and topology of networks, attempting to find a balance between the fitness of evolved solutions and their diversity.</p>
+                        <p>The goal is to use NEAT to train dots, which spawn at the bottom right of the screen, to find a way to the pink goal at the top left of the screen, while avoiding to collide with some obstacles you can draw yourself.</p>
+                    </div>
+                <div class="tab-pane" id="2">
+                    <p>- Toggle the <b>add obstacle</b> button to draw obstacles. Remove an obstacle by clicking it with the middle mouse button.
+                    <br>- Click the <b>play</b> button to start the learning process
+                    <br>- <b>hide graphics</b> disables the rendering of the dots, improving the calculating speed of the algorithm
+                    <br>- <b>Run best</b> shows you the best performing dot up untill this point
+                    <br>- <b>best of each generation</b> loops through all the generations up untill this point, showing you the best performing dot of each generation (press right arrow key to move to next generation)</p>
+                </div>
+                    <div class="tab-pane" id="3">
+                        <p>In the bottom center of the screen you can see the <b>brain</b> of the best performing dot. It is represented by the input-layer (the leftmost column containing the bubbles numberd 1 - 9) and the outputlayer (bubbles 10 and 11). The brain will evolve based on the situations the dot encouters.</p>
+                        <p>The <b>inputlayer</b> (1-9) represents the dot's senses, of which it has nice. It can detect which direction it is currently facing and it has vision in 8 directions: up, down, left, right and diagonal. 
+                        <br> The <b>outputlayer</b> (10 and 11) represents the actions the dot can undertake. In this implementation the dot can do two things: steer (10) and accelerate (11).
+                        <br> The dot's job is now to relate the inputs on the actions it can undertake. For example: ff the dot detects an obstacle to it's right while it is traveling north, it should learn not to steer to the right since this would result in a collision and death. So the dot has to learn what is the 'best' action. But how does it decide which of the actions are 'good'? That is where the fitness function comes in. 
+                        <br>The <b>fitness</b>, or 'how well does this dot perform?' is pretty important. It is used to make a selection out of the 1000 dots that have spawned select the best performing dots for 'breeding'. Just like in Darwin's theory of evolution well-performing dots have a higher change of survival. See <a href="http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf" target="_blank">the NEAT paper</a> for more details on how the algorithm works under the hood.
+                        <br>In this example the <b>performance</b> of each dot is dependent: if the dot does not see the goal (there is a straight line between the dot and the goal without any obstacles inbetween) then the fitness increases the more distance the dot travels. If the dot does see the goal then it's fitness is determined by the distance to the goal (smaller is better). This ensures that dots that have not seen the goal start searching and dots that have seen the goal have a greater change of being selected for breeding.
+                        </p>
+
+                        <p>
+                            For questions and/or suggestions to this implementation you can leave a comment on <a href="https://pyoneer.nl/?p=101">this</a> post 
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!--  -->
+
+            <!--<h4>Int roduction and goal</h4>
+            <p>DOTS is a implementation of a self-learning genetic algorithm called <a href="http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf" target="_blank">NEAT (NeuroEvolution of Augmenting Topologies)</a>, developed by Ken Stanley. It alters both the weighting parameters and topology of networks, attempting to find a balance between the fitness of evolved solutions and their diversity.</p>
+            <p>The goal is to use NEAT to train dots, which spawn at the bottom right of the screen, to find a way to the pink goal at the top left of the screen, while avoiding to collide with some obstacles you can draw yourself.</p>
+            <br>
+
+            <h4>Instructions</h4>
+            <p>- Toggle the <b>add obstacle</b> button to draw obstacles. Remove an obstacle by clicking it with the middle mouse button.
+            <br>- Click the <b>play</b> button to start the learning process
+            <br>- <b>hide graphics</b> disables the rendering of the dots, improving the calculating speed of the algorithm
+            <br>- <b>Run best</b> shows you the best performing dot up untill this point
+            <br>- <b>best of each generation</b> loops through all the generations up untill this point, showing you the best performing dot of each generation (press right arrow key to move to next generation)</p>
+          
+            <h4>How it works</h4>
+            <p>In the bottom center of the screen you can see the <b>brain</b> of the best performing dot. It is represented by the input-layer (the leftmost column containing the bubbles numberd 1 - 9) and the outputlayer (bubbles 10 and 11). The brain will evolve based on the situations the dot encouters.</p>
+            <p>The <b>inputlayer</b> (1-9) represents the dot's senses, of which it has nice. It can detect which direction it is currently facing and it has vision in 8 directions: up, down, left, right and diagonal. 
+            <br> The <b>outputlayer</b> (10 and 11) represents the actions the dot can undertake. In this implementation the dot can do two things: steer (10) and accelerate (11).
+            <br> The dot's job is now to relate the inputs on the actions it can undertake. For example: ff the dot detects an obstacle to it's right while it is traveling north, it should learn not to steer to the right since this would result in a collision and death. So the dot has to learn what is the 'best' action. But how does it decide which of the actions are 'good'? That is where the fitness function comes in. 
+            <br>The <b>fitness</b>, or 'how well does this dot perform?' is pretty important. It is used to make a selection out of the 1000 dots that have spawned select the best performing dots for 'breeding'. Just like in Darwin's theory of evolution well-performing dots have a higher change of survival. See <a href="http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf" target="_blank">the NEAT paper</a> for more details on how the algorithm works under the hood.
+            <br>In this example the <b>performance</b> of each dot is dependent: if the dot does not see the goal (there is a straight line between the dot and the goal without any obstacles inbetween) then the fitness increases the more distance the dot travels. If the dot does see the goal then it's fitness is determined by the distance to the goal (smaller is better). This ensures that dots that have not seen the goal start searching and dots that have seen the goal have a greater change of being selected for breeding.
+            </p>
+
+            <p>
+                For questions and/or suggestions to this implementation you can leave a comment on <a href="https://pyoneer.nl/?p=101">this</a> post 
+            </p> -->
+
+
+          </div>
+          
+          <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--  -->
+
+
+<script>
+    $('#basicExampleModal').modal('show');
+
+    //center the canvas
+    // var tempString = ""+((window.innerWidth*0.9- 1026 - window.innerWidth*0.9*0.08 )/2)+ "px";
+    // document.getElementById("main").style.marginLeft = tempString;
+
+
+    // window.onresize = function(event) {
+    //   var tempString = ""+((window.innerWidth*0.9- 1026 - window.innerWidth*0.9*0.08 )/2)+ "px";
+    //   document.getElementById("main").style.marginLeft = tempString;
+    // };
+
+</script>
+
+
+
+</body>
+</html>
