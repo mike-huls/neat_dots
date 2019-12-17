@@ -159,7 +159,13 @@ function saveBestEverPlayer() {
   } else { //once dead
     saveBest = false; //stop replaying it
     population.bestPlayer = population.bestPlayer.cloneForReplay(); //reset the best player so it can play again
-    console.log(population.bestPlayer.brain);
+
+
+    let ding = JSON.parse(population.bestPlayer.brain);
+    console.log(ding);
+    let dingg = JSON.stringify(ding);
+    console.log(dingg);
+    die();
     console.log(JSON.stringify(population.bestPlayer.brain));
     for (var i = 0; i < population.players.length; i++) {
       population.players[i] = population.bestPlayer;
@@ -303,63 +309,70 @@ function keyPressed() {
 }
 
 function menuButton(key) {
-    switch (key) {
-        case 'p':
-            let btn_obstacle = document.getElementById("btn_o");
-            // btn_obstacle.disabled = true;
-            hasPlayed = true;
-            btn_obstacle.firstChild.data = "Add obstacles";
+  switch (key) {
+    case 'p':
+      hasPlayed = true;
+      adding_obstacles = false;
+      pause = !pause;
+
+      let btn_obstacle = document.getElementById("btn_o");
+      btn_obstacle.firstChild.data = "Add obstacles";
+      btn_obstacle.disabled = true;
+      btn_obstacle.classList.remove('btn-primary');
+      btn_obstacle.classList.add('btn-secondary');
 
 
-            pause = !pause;
-            var btn_pause = document.getElementById("btn_p");
-            if (pause) { btn_pause.firstChild.data = "Play";
-            } else { btn_pause.firstChild.data = "Pause";
-            }
-            break;
-        case 'sb':
-            showBest = !showBest;
-            break;
-        case 's':
-          saveBest = !saveBest;
-          break;
-        case 'rb':
-            if (population.bestPlayer) {
-                runBest = !runBest;
-            }
-            break;
-        case 'g':
-            showBestEachGen = !showBestEachGen;
-            upToGen = 0;
-            genPlayerTemp = population.genPlayers[upToGen].clone();
-            break;
-        case 'n':
-            showNothing = !showNothing;
-            var btn_show_nothing = document.getElementById("btn_n");
-            if (showNothing) { btn_show_nothing.firstChild.data = "Show graphics";
-            } else { btn_show_nothing.firstChild.data = "Hide graphics";
-            }
-            break;
-        case 'h':
-            humanPlaying = !humanPlaying;
-            humanPlayer = new Player();
-            break;
-        case 'o':
-          if (this.hasPlayed) {
-            return;
-          }
-            adding_obstacles = !adding_obstacles;
-            var btn_add_obstacle = document.getElementById("btn_o");
-            if (adding_obstacles) { 
-              btn_add_obstacle.firstChild.data = "Exit editor";
-              // document.getElementById("btn_p").disabled = true;
-            } else { 
-              btn_add_obstacle.firstChild.data = "Add obstacles";
 
-            }
-            // document.getElementById("btn_p").disabled = adding_obstacles  ;
-            break;
-    }
+      var btn_pause = document.getElementById("btn_p");
+      if 
+        (pause) { btn_pause.firstChild.data = "Play";
+      } else { 
+        btn_pause.firstChild.data = "Pause";
+      }
+      break;
+    case 'sb':
+      showBest = !showBest;
+      break;
+    case 's':
+      saveBest = !saveBest;
+      break;
+    case 'rb':
+      if (population.bestPlayer) {
+          runBest = !runBest;
+      }
+      break;
+    case 'g':
+      showBestEachGen = !showBestEachGen;
+      upToGen = 0;
+      genPlayerTemp = population.genPlayers[upToGen].clone();
+      break;
+    case 'n':
+      showNothing = !showNothing;
+      var btn_show_nothing = document.getElementById("btn_n");
+      if (showNothing) { 
+        btn_show_nothing.firstChild.data = "Show graphics";
+      } else { 
+        btn_show_nothing.firstChild.data = "Hide graphics";
+      }
+      break;
+    case 'h':
+      humanPlaying = !humanPlaying;
+      humanPlayer = new Player();
+      break;
+    case 'o':
+      if (this.hasPlayed) {
+        return;
+      }
+      adding_obstacles = !adding_obstacles;
+      var btn_add_obstacle = document.getElementById("btn_o");
+      if (adding_obstacles) { 
+        btn_add_obstacle.firstChild.data = "Exit editor";
+        // document.getElementById("btn_p").disabled = true;
+      } else { 
+        btn_add_obstacle.firstChild.data = "Add obstacles";
+      }
+      break;
+  }
 }
 
 function touchStarted() {
