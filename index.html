@@ -29,6 +29,8 @@
     <script language="javascript" type="text/javascript" src="Species.js"></script>
     <script language="javascript" type="text/javascript" src="Genome.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="css/toggle.css">
+
 
 
 </head>
@@ -43,8 +45,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 
-    <div id = "main">
-        <div id = "canvas">
+    <div id="main">
+        <div id="canvas">
         </div>
         
         <div class="btn-group btn-group-justified">
@@ -56,7 +58,18 @@
             <a href="#" class="btn btn-primary" id="btn_g" onclick="menuButton('g')">see best of each generation</a>
             <!-- <a href="#" class="btn btn-primary" onclick="menuButton('sb')">show best</a> -->
             <!-- <a href="#" class="btn btn-primary" onclick="menuButton('h')">human player</a> -->
+            <a href="#" class="btn btn-primary" id="btn_s" onclick="menuButton('s')">Save best model</a>
+            <a href="#" class="btn btn-primary" id="btn_l" onclick="menuButton('l')">Load model</a>
+
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+
         </div>
+
+
         
 
 
@@ -166,11 +179,11 @@
         </div>
       </div>
     </div>
-    <!--  -->
+    <!-- / MOdal  -->
 
 
 <script>
-    $('#basicExampleModal').modal('show');
+    // $('#basicExampleModal').modal('show');
 
     //center the canvas
     // var tempString = ""+((window.innerWidth*0.9- 1026 - window.innerWidth*0.9*0.08 )/2)+ "px";

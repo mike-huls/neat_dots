@@ -14,6 +14,8 @@ var speed = 60;
 var showBest = false; //true if only show the best of the previous generation
 var runBest = false; //true if replaying the best ever game
 var humanPlaying = false; //true if the user is playing
+var saveBest = false; //true when saving the best
+
 
 var humanPlayer;
 
@@ -26,70 +28,73 @@ var genPlayerTemp; //player
 var showNothing = false;
 
 var pause = true;
+var hasPlayed = false;
 var adding_obstacles = false;
 
 var mousedown=false;
 var linedraw_keeper;
 
+var _windowWidth;
+var _windowHeight;
+
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 function setup() {
-  window.canvas = createCanvas(1280, 720);
-  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
+  // window.canvas = createCanvas(1280, 720);
+  _windowWidth = windowWidth;
+  _windowHeight = windowHeight;
+
+  window.canvas = createCanvas(_windowWidth, (_windowHeight-50));
   population = new Population(1000);
   humanPlayer = new Player();
   goal = new Goal();
   obstacles = new Obstacles();
 
 }
-let x = 100,
-  y = 100,
-  angle1 = 0.0,
-  segLength = 50;
+// let x = 100,
+//   y = 100,
+//   angle1 = 0.0,
+//   segLength = 50;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 function draw() {
 
-    // SET THE BACKGROUND
-    background('rgb(200, 200, 200)');
 
-    // circle(1255, 695, 18);
-    // circle(14, 17, 10);
-    // circle(13, 49, 10);
+  // Clear --> background color
+  background('rgb(220, 220, 220)');
 
-    // FOR DRAWING OBSTACLES
-    if (mousedown) {
-      stroke(0);
-      strokeWeight(15);
-      line(linedraw_keeper.x, linedraw_keeper.y, mouseX, mouseY);
+
+  // FOR DRAWING OBSTACLES
+  if (mousedown) {
+    stroke(0);
+    strokeWeight(15);
+    line(linedraw_keeper.x, linedraw_keeper.y, mouseX, mouseY);
+  }
+
+  goal.update();
+  obstacles.update();
+  drawToScreen();
+
+
+  if (!pause) {
+
+    if (showBestEachGen) { //show the best of each gen
+        showBestPlayersForEachGeneration();
+    } else if (humanPlaying) { //if the user is controling the ship[
+        showHumanPlaying();
+    } else if (runBest) { // if replaying the best ever game
+        showBestEverPlayer();
+    } else if (saveBest) {
+      saveBestEverPlayer();
+    } else { 
+      //if just evolving normally
+      if (!population.done()) { //if any players are alive then update them
+          population.updateAlive();
+      } else { //all dead
+          population.naturalSelection();
+      }
     }
-
-    // UPDATE GOAL AND OBSTACLES AND WRITE INFO EVERY FRAME
-    goal.update();
-    obstacles.update();
-    drawToScreen();
-
-
-    if (!pause) {
-
-        if (showBestEachGen) { //show the best of each gen
-            showBestPlayersForEachGeneration();
-        } else if (humanPlaying) { //if the user is controling the ship[
-            showHumanPlaying();
-        } else if (runBest) { // if replaying the best ever game
-            showBestEverPlayer();
-        } else { 
-            //if just evolving normally
-            if (!population.done()) { //if any players are alive then update them
-                population.updateAlive();
-            } else { //all dead
-                //genetic algorithm
-                population.naturalSelection();
-            }
-        }
-
-
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------------
@@ -120,6 +125,18 @@ function showHumanPlaying() {
     humanPlaying = false;
   }
 }
+
+function download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    
+    console.log(content);
+    var file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
+
 //-----------------------------------------------------------------------------------
 function showBestEverPlayer() {
   if (!population.bestPlayer.dead) { //if best player is not dead
@@ -130,6 +147,26 @@ function showBestEverPlayer() {
   } else { //once dead
     runBest = false; //stop replaying it
     population.bestPlayer = population.bestPlayer.cloneForReplay(); //reset the best player so it can play again
+    console.log(population.bestPlayer);
+  }
+}
+function saveBestEverPlayer() {
+  if (!population.bestPlayer.dead) { //if best player is not dead
+    population.bestPlayer.look();
+    population.bestPlayer.think();
+    population.bestPlayer.update();
+    population.bestPlayer.show();
+  } else { //once dead
+    saveBest = false; //stop replaying it
+    population.bestPlayer = population.bestPlayer.cloneForReplay(); //reset the best player so it can play again
+    console.log(population.bestPlayer.brain);
+    console.log(JSON.stringify(population.bestPlayer.brain));
+    for (var i = 0; i < population.players.length; i++) {
+      population.players[i] = population.bestPlayer;
+    }
+
+    download(population.bestPlayer, 'model_timestamp.json', 'text/plain');
+    // die();
   }
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -143,9 +180,11 @@ function drawToScreen() {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function drawBrain() { //show the brain of whatever genome is currently showing
   var startX = 350; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
-  var startY = 550;
+  // var startY = 500;
+  var startY = _windowHeight * .70;
   var w = 300;
-  var h = 200;
+  // var h = 225;
+  var h = _windowHeight / 4;
 
     if (runBest) {
         population.bestPlayer.brain.drawGenome(startX, startY, w, h);
@@ -156,6 +195,7 @@ function drawBrain() { //show the brain of whatever genome is currently showing
     } else {
         population.players[0].brain.drawGenome(startX, startY, w, h);
     }
+    // die();
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //writes info about the current player
@@ -182,7 +222,6 @@ function writeInfo() {
         // }
     }
 }
-
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 function keyPressed() {
@@ -266,6 +305,12 @@ function keyPressed() {
 function menuButton(key) {
     switch (key) {
         case 'p':
+            let btn_obstacle = document.getElementById("btn_o");
+            // btn_obstacle.disabled = true;
+            hasPlayed = true;
+            btn_obstacle.firstChild.data = "Add obstacles";
+
+
             pause = !pause;
             var btn_pause = document.getElementById("btn_p");
             if (pause) { btn_pause.firstChild.data = "Play";
@@ -275,6 +320,9 @@ function menuButton(key) {
         case 'sb':
             showBest = !showBest;
             break;
+        case 's':
+          saveBest = !saveBest;
+          break;
         case 'rb':
             if (population.bestPlayer) {
                 runBest = !runBest;
@@ -297,6 +345,9 @@ function menuButton(key) {
             humanPlayer = new Player();
             break;
         case 'o':
+          if (this.hasPlayed) {
+            return;
+          }
             adding_obstacles = !adding_obstacles;
             var btn_add_obstacle = document.getElementById("btn_o");
             if (adding_obstacles) { 
@@ -309,6 +360,31 @@ function menuButton(key) {
             // document.getElementById("btn_p").disabled = adding_obstacles  ;
             break;
     }
+}
+
+function touchStarted() {
+  // ellipse(mouseX, mouseY, 50, 50);
+  if (adding_obstacles) {
+    if (mouseX >= 0 && mouseX <= canvas.width) {
+      if (mouseY >= 0 && mouseY <= canvas.height){
+        mousedown = true;
+        linedraw_keeper = {x: mouseX, y: mouseY}
+      }
+    }
+  }
+  return false;
+}
+
+function touchEnded() {
+  if (adding_obstacles) {
+    if (mouseX >= 0 && mouseX <= canvas.width) {
+      if (mouseY >= 0 && mouseY <= canvas.height){
+        mousedown = false;
+        obstacles.new_line_obstacle(linedraw_keeper.x, linedraw_keeper.y, mouseX, mouseY);  
+      }
+    }
+  }
+  return false;
 }
 
 function mousePressed(event) {

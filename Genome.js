@@ -1,5 +1,7 @@
 class Genome {
   
+  vision_labels = ['up', 'left', 'down', 'right', 'n-e', 's-e', 'n-w', 's-w', 'seesgoal', 'direction', 'steering', 'accelerating', 'bias'];
+
   constructor(inputs, outputs, crossover) {
     this.genes = []; //a list of connections between this.nodes which represent the NN
     this.nodes = [];
@@ -7,6 +9,7 @@ class Genome {
     this.outputs = outputs;
     this.layers = 2;
     this.nextNode = 0;
+
     // this.biasNode;
     this.network = []; //a list of the this.nodes in the order that they need to be considered in the NN
     //create input this.nodes
@@ -32,6 +35,8 @@ class Genome {
     this.biasNode = this.nextNode;
     this.nextNode++;
     this.nodes[this.biasNode].layer = 0;
+
+
   }
 
   fullyConnect(innovationHistory) {
@@ -56,8 +61,8 @@ class Genome {
     //changed this so if error here
     this.connectNodes();
   }
-
   //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
   //returns the node with a matching number
   //sometimes the this.nodes will not be in order
   getNode(nodeNumber) {
@@ -68,9 +73,8 @@ class Genome {
     }
     return null;
   }
-
-
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
   //adds the conenctions going out of a node to that node so that it can acess the next node during feeding forward
   connectNodes() {
 
@@ -82,8 +86,8 @@ class Genome {
       this.genes[i].fromNode.outputConnections.push(this.genes[i]); //add it to node
     }
   }
-
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
   //feeding in input values varo the NN and returning output array
   feedForward(inputValues) {
     //set the outputs of the input this.nodes
@@ -108,28 +112,28 @@ class Genome {
 
     return outs;
   }
-
   //----------------------------------------------------------------------------------------------------------------------------------------
+  
   //sets up the NN as a list of this.nodes in order to be engaged
-
   generateNetwork() {
-      this.connectNodes();
-      this.network = [];
-      //for each layer add the node in that layer, since layers cannot connect to themselves there is no need to order the this.nodes within a layer
+    this.connectNodes();
+    this.network = [];
+    //for each layer add the node in that layer, since layers cannot connect to themselves there is no need to order the this.nodes within a layer
 
-      for (var l = 0; l < this.layers; l++) { //for each layer
-        for (var i = 0; i < this.nodes.length; i++) { //for each node
-          if (this.nodes[i].layer == l) { //if that node is in that layer
-            this.network.push(this.nodes[i]);
-          }
+    for (var l = 0; l < this.layers; l++) { //for each layer
+      for (var i = 0; i < this.nodes.length; i++) { //for each node
+        if (this.nodes[i].layer == l) { //if that node is in that layer
+          this.network.push(this.nodes[i]);
         }
       }
     }
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    //mutate the NN by adding a new node
-    //it does this by picking a random connection and disabling it then 2 new connections are added
-    //1 between the input node of the disabled connection and the new node
-    //and the other between the new node and the output of the disabled connection
+  }
+  //-----------------------------------------------------------------------------------------------------------------------------------------
+  
+  //mutate the NN by adding a new node
+  //it does this by picking a random connection and disabling it then 2 new connections are added
+  //1 between the input node of the disabled connection and the new node
+  //and the other between the new node and the output of the disabled connection
   addNode(innovationHistory) {
     //pick a random connection to create a node between
     if (this.genes.length == 0) {
@@ -174,41 +178,41 @@ class Genome {
     }
     this.connectNodes();
   }
-
   //------------------------------------------------------------------------------------------------------------------
+  
   //adds a connection between 2 this.nodes which aren't currently connected
   addConnection(innovationHistory) {
-      //cannot add a connection to a fully connected network
-      if (this.fullyConnected()) {
-        console.log("connection failed");
-        return;
-      }
-
-
-      //get random this.nodes
-      var randomNode1 = floor(random(this.nodes.length));
-      var randomNode2 = floor(random(this.nodes.length));
-      while (this.randomConnectionNodesAreShit(randomNode1, randomNode2)) { //while the random this.nodes are no good
-        //get new ones
-        randomNode1 = floor(random(this.nodes.length));
-        randomNode2 = floor(random(this.nodes.length));
-      }
-      var temp;
-      if (this.nodes[randomNode1].layer > this.nodes[randomNode2].layer) { //if the first random node is after the second then switch
-        temp = randomNode2;
-        randomNode2 = randomNode1;
-        randomNode1 = temp;
-      }
-
-      //get the innovation number of the connection
-      //this will be a new number if no identical genome has mutated in the same way
-      var connectionInnovationNumber = this.getInnovationNumber(innovationHistory, this.nodes[randomNode1], this.nodes[randomNode2]);
-      //add the connection with a random array
-
-      this.genes.push(new connectionGene(this.nodes[randomNode1], this.nodes[randomNode2], random(-1, 1), connectionInnovationNumber)); //changed this so if error here
-      this.connectNodes();
+    //cannot add a connection to a fully connected network
+    if (this.fullyConnected()) {
+      console.log("connection failed");
+      return;
     }
-    //-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    //get random this.nodes
+    var randomNode1 = floor(random(this.nodes.length));
+    var randomNode2 = floor(random(this.nodes.length));
+    while (this.randomConnectionNodesAreShit(randomNode1, randomNode2)) { //while the random this.nodes are no good
+      //get new ones
+      randomNode1 = floor(random(this.nodes.length));
+      randomNode2 = floor(random(this.nodes.length));
+    }
+    var temp;
+    if (this.nodes[randomNode1].layer > this.nodes[randomNode2].layer) { //if the first random node is after the second then switch
+      temp = randomNode2;
+      randomNode2 = randomNode1;
+      randomNode1 = temp;
+    }
+
+    //get the innovation number of the connection
+    //this will be a new number if no identical genome has mutated in the same way
+    var connectionInnovationNumber = this.getInnovationNumber(innovationHistory, this.nodes[randomNode1], this.nodes[randomNode2]);
+    //add the connection with a random array
+
+    this.genes.push(new connectionGene(this.nodes[randomNode1], this.nodes[randomNode2], random(-1, 1), connectionInnovationNumber)); //changed this so if error here
+    this.connectNodes();
+  }
+  //-------------------------------------------------------------------------------------------------------------------------------------------
   randomConnectionNodesAreShit(r1, r2) {
     if (this.nodes[r1].layer == this.nodes[r2].layer) return true; // if the this.nodes are in the same layer
     if (this.nodes[r1].isConnectedTo(this.nodes[r2])) return true; //if the this.nodes are already connected
@@ -217,35 +221,35 @@ class Genome {
 
     return false;
   }
-
   //-------------------------------------------------------------------------------------------------------------------------------------------
+  
   //returns the innovation number for the new mutation
   //if this mutation has never been seen before then it will be given a new unique innovation number
   //if this mutation matches a previous mutation then it will be given the same innovation number as the previous one
   getInnovationNumber(innovationHistory, from, to) {
-      var isNew = true;
-      var connectionInnovationNumber = nextConnectionNo;
-      for (var i = 0; i < innovationHistory.length; i++) { //for each previous mutation
-        if (innovationHistory[i].matches(this, from, to)) { //if match found
-          isNew = false; //its not a new mutation
-          connectionInnovationNumber = innovationHistory[i].innovationNumber; //set the innovation number as the innovation number of the match
-          break;
-        }
+    var isNew = true;
+    var connectionInnovationNumber = nextConnectionNo;
+    for (var i = 0; i < innovationHistory.length; i++) { //for each previous mutation
+      if (innovationHistory[i].matches(this, from, to)) { //if match found
+        isNew = false; //its not a new mutation
+        connectionInnovationNumber = innovationHistory[i].innovationNumber; //set the innovation number as the innovation number of the match
+        break;
       }
-
-      if (isNew) { //if the mutation is new then create an arrayList of varegers representing the current state of the genome
-        var innoNumbers = [];
-        for (var i = 0; i < this.genes.length; i++) { //set the innovation numbers
-          innoNumbers.push(this.genes[i].innovationNo);
-        }
-
-        //then add this mutation to the innovationHistory
-        innovationHistory.push(new connectionHistory(from.number, to.number, connectionInnovationNumber, innoNumbers));
-        nextConnectionNo++;
-      }
-      return connectionInnovationNumber;
     }
-    //----------------------------------------------------------------------------------------------------------------------------------------
+
+    if (isNew) { //if the mutation is new then create an arrayList of varegers representing the current state of the genome
+      var innoNumbers = [];
+      for (var i = 0; i < this.genes.length; i++) { //set the innovation numbers
+        innoNumbers.push(this.genes[i].innovationNo);
+      }
+
+      //then add this mutation to the innovationHistory
+      innovationHistory.push(new connectionHistory(from.number, to.number, connectionInnovationNumber, innoNumbers));
+      nextConnectionNo++;
+    }
+    return connectionInnovationNumber;
+  }
+  //----------------------------------------------------------------------------------------------------------------------------------------
 
   //returns whether the network is fully connected or not
   fullyConnected() {
@@ -276,9 +280,8 @@ class Genome {
 
     return false;
   }
-
-
   //-------------------------------------------------------------------------------------------------------------------------------
+  
   //mutates the genome
   mutate(innovationHistory) {
     if (this.genes.length == 0) {
@@ -308,8 +311,8 @@ class Genome {
       this.addNode(innovationHistory);
     }
   }
-
   //---------------------------------------------------------------------------------------------------------------------------------
+
   //called when this Genome is better that the other parent
   crossover(parent2) {
     var child = new Genome(this.inputs, this.outputs, true);
@@ -365,19 +368,19 @@ class Genome {
     child.connectNodes();
     return child;
   }
-
   //----------------------------------------------------------------------------------------------------------------------------------------
+
   //returns whether or not there is a gene matching the input innovation number  in the input genome
   matchingGene(parent2, innovationNumber) {
-      for (var i = 0; i < parent2.genes.length; i++) {
-        if (parent2.genes[i].innovationNo == innovationNumber) {
-          return i;
-        }
+    for (var i = 0; i < parent2.genes.length; i++) {
+      if (parent2.genes[i].innovationNo == innovationNumber) {
+        return i;
       }
-      return -1; //no matching gene found
     }
-    //----------------------------------------------------------------------------------------------------------------------------------------
-    //prints out info about the genome to the console
+    return -1; //no matching gene found
+  }
+  //----------------------------------------------------------------------------------------------------------------------------------------
+  //prints out info about the genome to the console
   printGenome() {
     console.log("Prvar genome  layers:" + this.layers);
     console.log("bias node: " + this.biasNode);
@@ -393,32 +396,33 @@ class Genome {
 
     console.log();
   }
-
   //----------------------------------------------------------------------------------------------------------------------------------------
+
   //returns a copy of this genome
   clone() {
 
-      var clone = new Genome(this.inputs, this.outputs, true);
+    var clone = new Genome(this.inputs, this.outputs, true);
 
-      for (var i = 0; i < this.nodes.length; i++) { //copy this.nodes
-        clone.nodes.push(this.nodes[i].clone());
-      }
-
-      //copy all the connections so that they connect the clone new this.nodes
-
-      for (var i = 0; i < this.genes.length; i++) { //copy genes
-        clone.genes.push(this.genes[i].clone(clone.getNode(this.genes[i].fromNode.number), clone.getNode(this.genes[i].toNode.number)));
-      }
-
-      clone.layers = this.layers;
-      clone.nextNode = this.nextNode;
-      clone.biasNode = this.biasNode;
-      clone.connectNodes();
-
-      return clone;
+    for (var i = 0; i < this.nodes.length; i++) { //copy this.nodes
+      clone.nodes.push(this.nodes[i].clone());
     }
-    //----------------------------------------------------------------------------------------------------------------------------------------
-    //draw the genome on the screen
+
+    //copy all the connections so that they connect the clone new this.nodes
+
+    for (var i = 0; i < this.genes.length; i++) { //copy genes
+      clone.genes.push(this.genes[i].clone(clone.getNode(this.genes[i].fromNode.number), clone.getNode(this.genes[i].toNode.number)));
+    }
+
+    clone.layers = this.layers;
+    clone.nextNode = this.nextNode;
+    clone.biasNode = this.biasNode;
+    clone.connectNodes();
+
+    return clone;
+  }
+  //----------------------------------------------------------------------------------------------------------------------------------------
+
+  //draw the genome on the screen
   drawGenome(startX, startY, w, h) {
     //i know its ugly but it works (and is not that important) so I'm not going to mess with it
     var allNodes = []; //new ArrayList<ArrayList<Node>>();
@@ -426,8 +430,6 @@ class Genome {
     var nodeNumbers = []; // new ArrayList<Integer>();
 
     //get the positions on the screen that each node is supposed to be in
-
-
     //split the this.nodes varo layers
     for (var i = 0; i < this.layers; i++) {
       var temp = []; // new ArrayList<Node>();
@@ -472,7 +474,8 @@ class Genome {
       line(from.x, from.y, to.x, to.y);
     }
 
-    //draw this.nodes last so they appear ontop of the connection lines
+    // INPUT NODES Draw input nodes with text
+    // draw this.nodes last so they appear ontop of the connection lines
     for (var i = 0; i < nodePoses.length; i++) {
       fill(255);
       stroke(0);
@@ -481,26 +484,16 @@ class Genome {
       textSize(10);
       fill(0);
       textAlign(CENTER, CENTER);
-      text(nodeNumbers[i], nodePoses[i].x, nodePoses[i].y);
-
+      if (i <= 10 || i >= (nodePoses.length - 2)) {
+        // console.log('with text', i);
+        text(`${i} ${this.vision_labels[nodeNumbers[i]]}`, nodePoses[i].x, nodePoses[i].y);
+      } else {
+        // console.log("no text", i);
+        text(nodeNumbers[i], nodePoses[i].x, nodePoses[i].y);
+      }
+      // console.log(nodePoses);
+      // console.log(nodePoses.length);
+      // console.log(nodePoses.length -2);
     }
-
-    // print out neural network info text
-    // textAlign(RIGHT);
-    // fill(255);
-    // textSize(15);
-    // noStroke();
-    // text("car angle", nodePoses[0].x - 20, nodePoses[0].y);
-    // text("touching ground", nodePoses[1].x - 20, nodePoses[1].y);
-    // text("angular velocity", nodePoses[2].x - 20, nodePoses[2].y);
-    // text("Distance to ground", nodePoses[3].x - 20, nodePoses[3].y);
-    // text("gradient", nodePoses[4].x - 20, nodePoses[4].y);
-    // text("bias", nodePoses[5].x - 20, nodePoses[5].y);
-    // textAlign(LEFT);
-    // text("gas", nodePoses[nodePoses.length - 2].x + 20, nodePoses[nodePoses.length - 2].y);
-    // text("break", nodePoses[nodePoses.length - 1].x + 20, nodePoses[nodePoses.length - 1].y);
-
-
-
   }
 }

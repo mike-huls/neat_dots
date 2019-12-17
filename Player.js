@@ -7,6 +7,10 @@ class Player {
     
     // Attributes     -- vision
     visionRange = 250;
+
+    // input nodes
+    // Set vision labels in Genome.drawbrain
+    vision;
     
     // Attributes    -- navigation
     direction = 270;
@@ -193,6 +197,8 @@ class Player {
 
 
         // Set
+        // UPDATE IN Genome.js
+        // Check for INPUT NODES
         this.vision[0] = sees_obst_n;
         this.vision[1] = sees_obst_e;
         this.vision[2] = sees_obst_s;
