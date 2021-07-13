@@ -33,8 +33,8 @@ class Player {
     collidedWithObstacle = false;
 
     // Settings
-    showFancyGraphics = false;
-    showLoS = false;
+    // showSensors = true;
+    // showLoS = true;
 
     // Neat
     isBest = false;
@@ -106,19 +106,19 @@ class Player {
 
         // Collide with goal
         let d = dist(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
+        
         if (d <= this.diameter / 2 + goal.diameter / 2) {
             this.reachedGoal = true;
             this.dead = true;
+            this.fitness = this.fitness * 1.5;
+            goal.isReached = true;
         }
-
-        // if (this.pos.y
-        // die();
     }
     show() {
         let the_fill;
         if (!this.dead) {
             if (this.seesGoal) {
-                the_fill = 'rgb(0, 255, 0)';
+                the_fill = 'rgb(255,127,80)';
             } else {
                 the_fill = 'rgb(100, 100, 100)';
             }
@@ -138,25 +138,13 @@ class Player {
 
         // Line of sight to the goal
         // this.seesGoal = obstacles.has_line_of_sight(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
-        let _seesGoal = obstacles.line_of_sight(this, goal);
-        if (!_seesGoal) {
+        // let _seesGoal = obstacles.line_of_sight(this, goal);
+        let _seesGoal = obstacles.has_line_of_sight(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
+        if (_seesGoal) {
             this.seesGoal = true;
             this.hasSeenGoal = true;
         } else {
             this.seesGoal = false;
-        }
-
-        if (this.showLoS) {
-            if (this.seesGoal) {
-                stroke('rgb(0, 255, 0)');
-                strokeWeight(1);
-                line(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
-            } else {
-                stroke('rgb(255, 100, 25)');
-                strokeWeight(1);
-                line(this.pos.x, this.pos.y, _seesGoal.x, _seesGoal.y);
-                ellipse(_seesGoal.x, _seesGoal.y, 10, 10);
-            }
         }
 
 
@@ -172,42 +160,77 @@ class Player {
         let sees_obst_sw = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y + this.visionRange_diag);
 
 
+        // Normalize distance to obstacle
+        let sees_obst_n_dist = sees_obst_n ? 1 - (sees_obst_n.distance / this.visionRange) : 0;
+        let sees_obst_e_dist = sees_obst_e ? 1 - (sees_obst_e.distance / this.visionRange) : 0;
+        let sees_obst_s_dist = sees_obst_s ? 1 - (sees_obst_s.distance / this.visionRange) : 0;
+        let sees_obst_w_dist = sees_obst_w ? 1 - (sees_obst_w.distance / this.visionRange) : 0;
+
+        let sees_obst_ne_dist = sees_obst_ne ? 1 - (sees_obst_ne.distance / this.visionRange) : 0;
+        let sees_obst_se_dist = sees_obst_se ? 1 - (sees_obst_se.distance / this.visionRange) : 0;
+        let sees_obst_nw_dist = sees_obst_nw ? 1 - (sees_obst_nw.distance / this.visionRange) : 0;
+        let sees_obst_sw_dist = sees_obst_sw ? 1 - (sees_obst_sw.distance / this.visionRange) : 0;
+        
+
         // Show graphics?
-        if (this.showFancyGraphics) {
-            if (sees_obst_n) { line(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.visionRange); }
-            if (sees_obst_e) { line(this.pos.x, this.pos.y, this.pos.x + this.visionRange, this.pos.y); }
-            if (sees_obst_s) { line(this.pos.x, this.pos.y, this.pos.x, this.pos.y + this.visionRange); }
-            if (sees_obst_w) { line(this.pos.x, this.pos.y, this.pos.x - this.visionRange, this.pos.y); }
-            if (sees_obst_ne) { line(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y - this.visionRange_diag); }
-            if (sees_obst_se) { line(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y + this.visionRange_diag); }
-            if (sees_obst_nw) { line(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y - this.visionRange_diag); }
-            if (sees_obst_sw) { line(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y + this.visionRange_diag); }
+        if (Settings.showSensors) {
+            stroke(0,0,0)
+
+            stroke(1 - sees_obst_n_dist * 100);
+            // sees_obst_n ? stroke(255,127,80) : stroke(0,0,0)
+            line(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.visionRange);
+            stroke(sees_obst_e_dist * 100);
+            // sees_obst_e ? stroke(255,127,80) : stroke(0,0,0)
+            line(this.pos.x, this.pos.y, this.pos.x + this.visionRange, this.pos.y);
+            // sees_obst_s ? stroke(255,127,80) : stroke(0,0,0)
+            stroke(sees_obst_s_dist * 100);
+            line(this.pos.x, this.pos.y, this.pos.x, this.pos.y + this.visionRange);
+            // sees_obst_w ? stroke(255,127,80) : stroke(0,0,0)
+            stroke(sees_obst_w_dist * 100);
+            line(this.pos.x, this.pos.y, this.pos.x - this.visionRange, this.pos.y);
+            // sees_obst_ne ? stroke(255,127,80) : stroke(0,0,0)
+            stroke(sees_obst_ne_dist * 100);
+            line(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y - this.visionRange_diag);
+            // sees_obst_se ? stroke(255,127,80) : stroke(0,0,0)
+            stroke(sees_obst_se_dist * 100);
+            line(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y + this.visionRange_diag);
+            // sees_obst_nw ? stroke(255,127,80) : stroke(0,0,0)
+            stroke(sees_obst_nw_dist * 100);
+            line(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y - this.visionRange_diag);
+            // sees_obst_sw ? stroke(255,127,80) : stroke(0,0,0)
+            stroke(sees_obst_sw_dist * 100);
+            line(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y + this.visionRange_diag);
         }
 
-        // Normalize
-        sees_obst_n = sees_obst_n ? 1 - (sees_obst_n.distance / this.visionRange) : 0;
-        sees_obst_e = sees_obst_e ? 1 - (sees_obst_e.distance / this.visionRange) : 0;
-        sees_obst_s = sees_obst_s ? 1 - (sees_obst_s.distance / this.visionRange) : 0;
-        sees_obst_w = sees_obst_w ? 1 - (sees_obst_w.distance / this.visionRange) : 0;
+        
+        if (this.showSeesGoal) {
+            if (this.seesGoal) {
+                stroke('rgb(0,255,0)');
+                strokeWeight(1);
+                line(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
+            } else {
+                stroke('rgb(255, 100, 25)');
+                strokeWeight(1);
+                line(this.pos.x, this.pos.y, _seesGoal.x, _seesGoal.y);
+                ellipse(_seesGoal.x, _seesGoal.y, 10, 10);
+            }
+        }
 
-        sees_obst_ne = sees_obst_ne ? 1 - (sees_obst_ne.distance / this.visionRange) : 0;
-        sees_obst_se = sees_obst_se ? 1 - (sees_obst_se.distance / this.visionRange) : 0;
-        sees_obst_nw = sees_obst_nw ? 1 - (sees_obst_nw.distance / this.visionRange) : 0;
-        sees_obst_sw = sees_obst_sw ? 1 - (sees_obst_sw.distance / this.visionRange) : 0;
+
 
 
         // Set
         // UPDATE IN Genome.js
         // Check for INPUT NODES
-        this.vision[0] = sees_obst_n;
-        this.vision[1] = sees_obst_e;
-        this.vision[2] = sees_obst_s;
-        this.vision[3] = sees_obst_w;
+        this.vision[0] = sees_obst_n_dist;
+        this.vision[1] = sees_obst_e_dist;
+        this.vision[2] = sees_obst_s_dist;
+        this.vision[3] = sees_obst_w_dist;
 
-        this.vision[4] = sees_obst_ne;
-        this.vision[5] = sees_obst_se;
-        this.vision[6] = sees_obst_nw;
-        this.vision[7] = sees_obst_sw;
+        this.vision[4] = sees_obst_ne_dist;
+        this.vision[5] = sees_obst_se_dist;
+        this.vision[6] = sees_obst_nw_dist;
+        this.vision[7] = sees_obst_sw_dist;
 
         this.vision[8] = this.seesGoal;
         this.vision[9] = this.direction / 360;

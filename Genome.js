@@ -192,7 +192,7 @@ class Genome {
     //get random this.nodes
     var randomNode1 = floor(random(this.nodes.length));
     var randomNode2 = floor(random(this.nodes.length));
-    while (this.randomConnectionNodesAreShit(randomNode1, randomNode2)) { //while the random this.nodes are no good
+    while (!this.randomConnectionNodesSuitable(randomNode1, randomNode2)) { //while the random this.nodes are no good
       //get new ones
       randomNode1 = floor(random(this.nodes.length));
       randomNode2 = floor(random(this.nodes.length));
@@ -213,13 +213,11 @@ class Genome {
     this.connectNodes();
   }
   //-------------------------------------------------------------------------------------------------------------------------------------------
-  randomConnectionNodesAreShit(r1, r2) {
-    if (this.nodes[r1].layer == this.nodes[r2].layer) return true; // if the this.nodes are in the same layer
-    if (this.nodes[r1].isConnectedTo(this.nodes[r2])) return true; //if the this.nodes are already connected
-
-
-
-    return false;
+  randomConnectionNodesSuitable(r1, r2) {
+    /* Returns false*/
+    if (this.nodes[r1].layer == this.nodes[r2].layer) return false; // if the this.nodes are in the same layer
+    if (this.nodes[r1].isConnectedTo(this.nodes[r2])) return false; //if the this.nodes are already connected
+    return true;
   }
   //-------------------------------------------------------------------------------------------------------------------------------------------
   
@@ -468,9 +466,9 @@ class Genome {
       if (this.genes[i].weight > 0) {
         stroke(255, 0, 0);
       } else {
-        stroke(0, 0, 255);
+        stroke(0, 255, 0  );
       }
-      strokeWeight(map(abs(this.genes[i].weight), 0, 1, 0, 3));
+      strokeWeight(map(abs(this.genes[i].weight), 0, 1, 0, 10));
       line(from.x, from.y, to.x, to.y);
     }
 
@@ -485,15 +483,12 @@ class Genome {
       fill(0);
       textAlign(CENTER, CENTER);
       if (i <= 10 || i >= (nodePoses.length - 2)) {
-        // console.log('with text', i);
+        // draw with text
         text(`${i} ${this.vision_labels[nodeNumbers[i]]}`, nodePoses[i].x, nodePoses[i].y);
       } else {
-        // console.log("no text", i);
+        // draw without text
         text(nodeNumbers[i], nodePoses[i].x, nodePoses[i].y);
       }
-      // console.log(nodePoses);
-      // console.log(nodePoses.length);
-      // console.log(nodePoses.length -2);
     }
   }
 }

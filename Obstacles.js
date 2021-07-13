@@ -170,7 +170,6 @@ class Obstacles {
         } else {
             return true;
         }
-
     }
     line_of_sight(dot, goal) {
         /* returns the coordinate of the first object that breaks line of sigth or nothing */

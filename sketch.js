@@ -1,12 +1,7 @@
-//this is a template to add a NEAT ai to any game
-//note //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
-//this means that there is some information specific to the game to input here
-
-
 var nextConnectionNo = 1000;
 var population;
 var obstacles;
-var goal
+var goal;
 
 var speed = 60;
 
@@ -37,6 +32,13 @@ var linedraw_keeper;
 var _windowWidth;
 var _windowHeight;
 
+// Model information
+var _mi_score;
+var _mi_global_best_score;
+var _mi_gen_;
+var _mi_species;
+
+
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 function setup() {
@@ -45,16 +47,11 @@ function setup() {
   _windowHeight = windowHeight;
 
   window.canvas = createCanvas(_windowWidth, (_windowHeight-50));
-  population = new Population(1000);
+  population = new Population(Settings.InitialPopulation);
   humanPlayer = new Player();
   goal = new Goal();
   obstacles = new Obstacles();
-
 }
-// let x = 100,
-//   y = 100,
-//   angle1 = 0.0,
-//   segLength = 50;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 function draw() {
@@ -91,7 +88,18 @@ function draw() {
       if (!population.done()) { //if any players are alive then update them
           population.updateAlive();
       } else { //all dead
-          population.naturalSelection();
+        // Update scores
+        // _mi_score = document.getElementById('model_info_score');
+        // _mi_global_best_score = document.getElementById('model_info_gobal_best_score');
+        // _mi_gen_ = document.getElementById('model_info_gen');
+        // _mi_species = document.getElementById('model_info_species');
+
+        document.getElementById('model_info_score').innerHTML = `Score: ${population.players[0].score}`
+        document.getElementById('model_info_gobal_best_score').innerHTML = `Global score: ${population.bestScore}`
+        document.getElementById('model_info_gen').innerHTML = `Generation: ${population.gen}`
+        document.getElementById('model_info_species').innerHTML = `Species: ${population.species.length}`
+
+        population.naturalSelection();
       }
     }
   }
@@ -165,7 +173,6 @@ function saveBestEverPlayer() {
     console.log(ding);
     let dingg = JSON.stringify(ding);
     console.log(dingg);
-    die();
     console.log(JSON.stringify(population.bestPlayer.brain));
     for (var i = 0; i < population.players.length; i++) {
       population.players[i] = population.bestPlayer;
@@ -180,7 +187,9 @@ function saveBestEverPlayer() {
 function drawToScreen() {
   // if (!showNothing) {
     drawBrain();
-    writeInfo();
+
+    // Deactivate writing to screen
+    // writeInfo();
   // }
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -218,14 +227,21 @@ function writeInfo() {
     } else
     if (runBest) {
         text("Score: " + population.bestPlayer.score, 650, 50); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
-        text("Gen: " + population.gen, 1150, 50);
+        text("Gen: " + population.bestPlayer.gen, 650, 60);
+        // text("Species: ", + population.bestPlayer.species.length, 650, 50)
     } else {
-        // if (showBest) {
-            text("Score: " + population.players[0].score, 650, 50); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
-            text("Gen: " + population.gen, 1150, 50);
-            text("Species: " + population.species.length, 50, canvas.height / 2 + 300);
-            text("Global Best Score: " + population.bestScore, 50, canvas.height / 2 + 200);
-        // }
+      // if (showBest) {
+
+
+      // _mi_score.innterHTML = `Score: ${population.players[0].score}`
+      // _mi_global_best_score.innterHTML = `Score: ${population.players[0].score}`
+      // _mi_gen_.innterHTML = `Score: ${population.players[0].score}`
+      // _mi_species.innterHTML = `Score: ${population.players[0].score}`
+      text("Score: " + population.players[0].score, 650, 50); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
+      text("Gen: " + population.gen, 1150, 50);
+      text("Species: " + population.species.length, 50, canvas.height / 2 + 300);
+      text("Global Best Score: " + population.bestScore, 50, canvas.height / 2 + 200);
+      // }
     }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -324,8 +340,8 @@ function menuButton(key) {
 
 
       var btn_pause = document.getElementById("btn_p");
-      if 
-        (pause) { btn_pause.firstChild.data = "Play";
+      if (pause) { 
+        btn_pause.firstChild.data = "Play";
       } else { 
         btn_pause.firstChild.data = "Pause";
       }
@@ -371,6 +387,10 @@ function menuButton(key) {
       } else { 
         btn_add_obstacle.firstChild.data = "Add obstacles";
       }
+      break;
+    case 'sensorgraphics':
+      Settings.showSensors = !Settings.showSensors;
+      Settings.showSeesGoal = !Settings.showSeesGoal;
       break;
   }
 }

@@ -4,6 +4,7 @@ class Goal {
     spawnY = 100;
 
     diameter = 50;
+    isReached = false;
 
     constructor() {
         this.pos = createVector(this.spawnX, this.spawnY);
@@ -13,7 +14,11 @@ class Goal {
         this.show();
     }
     show() {
-        fill('rgb(255, 0, 255)');
+        if (this.isReached) {
+            fill('rgb(0, 255, 0)');
+        } else {
+            fill('rgb(255, 255, 255)');
+        }
         stroke('rgb(0,0,0)');
         strokeWeight(1);
         // circle(this.x, this.y, this.diameter);
