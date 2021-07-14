@@ -212,7 +212,6 @@ class Player {
                 stroke('rgb(255, 100, 25)');
                 strokeWeight(1);
                 line(this.pos.x, this.pos.y, _seesGoal.x, _seesGoal.y);
-                ellipse(_seesGoal.x, _seesGoal.y, 10, 10);
             }
         }
 

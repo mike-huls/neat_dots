@@ -444,7 +444,7 @@ class Genome {
       fill(255, 0, 0);
       var x = startX + float((i + 1.0) * w) / float(this.layers + 1.0);
       for (var j = 0; j < allNodes[i].length; j++) { //for the position in the layer
-        var y = startY + float((j + 1.0) * h) / float(allNodes[i].length + 1.0);
+        var y = startY + float((j + 1.8) * h) / float(allNodes[i].length + 1.0);
         nodePoses.push(createVector(x, y));
         nodeNumbers.push(allNodes[i][j].number);
       }

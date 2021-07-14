@@ -43,10 +43,10 @@ var _mi_species;
 
 function setup() {
   // window.canvas = createCanvas(1280, 720);
-  _windowWidth = windowWidth;
+  _windowWidth = windowWidth - 300;
   _windowHeight = windowHeight;
 
-  window.canvas = createCanvas(_windowWidth, (_windowHeight-50));
+  window.canvas = createCanvas(_windowWidth, _windowHeight);
   population = new Population(Settings.InitialPopulation);
   humanPlayer = new Player();
   goal = new Goal();
@@ -94,10 +94,10 @@ function draw() {
         // _mi_gen_ = document.getElementById('model_info_gen');
         // _mi_species = document.getElementById('model_info_species');
 
-        document.getElementById('model_info_score').innerHTML = `Score: ${population.players[0].score}`
-        document.getElementById('model_info_gobal_best_score').innerHTML = `Global score: ${population.bestScore}`
-        document.getElementById('model_info_gen').innerHTML = `Generation: ${population.gen}`
-        document.getElementById('model_info_species').innerHTML = `Species: ${population.species.length}`
+        document.getElementById('model_info_score').innerHTML = `Current score: ${population.players[0].score}`
+        // document.getElementById('model_info_gobal_best_score').innerHTML = `Global score: ${population.bestScore}`
+        document.getElementById('model_info_gen').innerHTML = `Current generation: ${population.gen}`
+        document.getElementById('model_info_species').innerHTML = `# species: ${population.species.length}`
 
         population.naturalSelection();
       }
@@ -194,12 +194,14 @@ function drawToScreen() {
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function drawBrain() { //show the brain of whatever genome is currently showing
-  var startX = 350; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
-  // var startY = 500;
-  var startY = _windowHeight * .70;
   var w = 300;
   // var h = 225;
   var h = _windowHeight / 4;
+  // var startX = 350; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
+  var startX = _windowWidth - w;
+  // var startY = 500;
+  // var startY = _windowHeight * .70;
+  var startY = 0;
 
     if (runBest) {
         population.bestPlayer.brain.drawGenome(startX, startY, w, h);
@@ -240,7 +242,7 @@ function writeInfo() {
       text("Score: " + population.players[0].score, 650, 50); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<replace
       text("Gen: " + population.gen, 1150, 50);
       text("Species: " + population.species.length, 50, canvas.height / 2 + 300);
-      text("Global Best Score: " + population.bestScore, 50, canvas.height / 2 + 200);
+      // text("Global Best Score: " + population.bestScore, 50, canvas.height / 2 + 200);
       // }
     }
 }
@@ -341,8 +343,12 @@ function menuButton(key) {
 
       var btn_pause = document.getElementById("btn_p");
       if (pause) { 
+        btn_pause.classList.remove('btn-warning');
+        btn_pause.classList.add('btn-success');
         btn_pause.firstChild.data = "Play";
       } else { 
+        btn_pause.classList.remove('btn-success');
+        btn_pause.classList.add('btn-warning');
         btn_pause.firstChild.data = "Pause";
       }
       break;
