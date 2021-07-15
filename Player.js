@@ -111,7 +111,12 @@ class Player {
             this.reachedGoal = true;
             this.dead = true;
             this.fitness = this.fitness * 1.5;
+            if (!goal.isReached) {
+                goal.isReachedGeneration = population.gen;
+            }
+
             goal.isReached = true;
+
         }
     }
     show() {

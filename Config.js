@@ -1,5 +1,5 @@
 const Settings = {
-  InitialPopulation: 100,
+  InitialPopulation: 400,
   showSensors: false,
   showSeesGoal: true
 }

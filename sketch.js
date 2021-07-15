@@ -94,6 +94,10 @@ function draw() {
         // _mi_gen_ = document.getElementById('model_info_gen');
         // _mi_species = document.getElementById('model_info_species');
 
+
+        console.log(goal);
+        console.log(goal.isReachedGeneration);
+        document.getElementById('model_info_goal_reached').innerHTML = `Goal reached generation: ${goal.isReachedGeneration}`
         document.getElementById('model_info_score').innerHTML = `Current score: ${population.players[0].score}`
         // document.getElementById('model_info_gobal_best_score').innerHTML = `Global score: ${population.bestScore}`
         document.getElementById('model_info_gen').innerHTML = `Current generation: ${population.gen}`

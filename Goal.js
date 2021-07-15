@@ -5,6 +5,7 @@ class Goal {
 
     diameter = 50;
     isReached = false;
+    isReachedGeneration = null;
 
     constructor() {
         this.pos = createVector(this.spawnX, this.spawnY);
