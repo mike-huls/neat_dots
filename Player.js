@@ -120,6 +120,10 @@ class Player {
         }
     }
     show() {
+        if (!Settings.renderDots) {
+            return;
+        }
+
         let the_fill;
         if (!this.dead) {
             if (this.seesGoal) {
@@ -177,7 +181,7 @@ class Player {
         let sees_obst_sw_dist = sees_obst_sw ? 1 - (sees_obst_sw.distance / this.visionRange) : 0;
         
 
-        // Show graphics?
+        // Show sensor graphics?
         if (Settings.showSensors) {
             stroke(0,0,0)
 
@@ -208,7 +212,7 @@ class Player {
         }
 
         
-        if (this.showSeesGoal) {
+        if (Settings.showSeesGoal) {
             if (this.seesGoal) {
                 stroke('rgb(0,255,0)');
                 strokeWeight(1);
@@ -216,7 +220,8 @@ class Player {
             } else {
                 stroke('rgb(255, 100, 25)');
                 strokeWeight(1);
-                line(this.pos.x, this.pos.y, _seesGoal.x, _seesGoal.y);
+                console.log(_seesGoal);
+                // line(this.pos.x, this.pos.y, _seesGoal.x, _seesGoal.y);
             }
         }
 

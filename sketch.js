@@ -94,10 +94,8 @@ function draw() {
         // _mi_gen_ = document.getElementById('model_info_gen');
         // _mi_species = document.getElementById('model_info_species');
 
-
-        console.log(goal);
-        console.log(goal.isReachedGeneration);
-        document.getElementById('model_info_goal_reached').innerHTML = `Goal reached generation: ${goal.isReachedGeneration}`
+        let goalReachedText = goal.isReached ? goal.isReachedGeneration : "not reached";
+        document.getElementById('model_info_goal_reached').innerHTML = `Goal reached generation: ${goalReachedText}`
         document.getElementById('model_info_score').innerHTML = `Current score: ${population.players[0].score}`
         // document.getElementById('model_info_gobal_best_score').innerHTML = `Global score: ${population.bestScore}`
         document.getElementById('model_info_gen').innerHTML = `Current generation: ${population.gen}`
@@ -372,14 +370,11 @@ function menuButton(key) {
       upToGen = 0;
       genPlayerTemp = population.genPlayers[upToGen].clone();
       break;
-    case 'n':
-      showNothing = !showNothing;
-      var btn_show_nothing = document.getElementById("btn_n");
-      if (showNothing) { 
-        btn_show_nothing.firstChild.data = "Show graphics";
-      } else { 
-        btn_show_nothing.firstChild.data = "Hide graphics";
-      }
+    case 'renderdotstoggle':
+      Settings.renderDots = !Settings.renderDots;
+      break;
+    case 'showSeesGoal':
+      Settings.showSeesGoal = !Settings.showSeesGoal;
       break;
     case 'h':
       humanPlaying = !humanPlaying;

@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Dots Neuro AI</title>
-
+    <link rel="stylesheet" type="text/css" href="css/page.css">
     <link rel="stylesheet" type="text/css" href="css/button.css">
     <link rel="stylesheet" type="text/css" href="css/toggle.css">
 </head>
@@ -58,31 +58,43 @@
             
 
 
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#basicExampleModal" style="position: absolute; padding: 0; margin: 0; right: 0px;">
-           Information
-        </button>
+        
     </div>
 
-    <div style="position: absolute; width: 280px; height: 80vh; right: 0px;">
-        <button type="button" 
-            class="btn btn-success btn-circle btn-xl" 
-            id="btn_p"
-            style="right: 0px;"
-            onclick="menuButton('p')">
-            Play
-        </button>
-
-        <br>
-        <p href="#" class="btn btn-primary" id="btn_o" onclick="menuButton('o')">Add obstacle</p>
+    <div style="position: absolute; width: 280px; height: 80vh; right: 0px; overflow-y: scroll;">
 
 
         <div class="card">
           <div class="card-body">
-            <h5>Model information</h5>
+            <h3>Dots</h3>
+        
+
+            <button type="button" 
+                class="btn btn-success btn-circle btn-xl" 
+                id="btn_p"
+                style="float: right;"
+                onclick="menuButton('p')">
+                Play
+            </button>
+            </div>
+        </div>
+
+
+        <div class="card">
+          <div class="card-body">
+            <h6>Obstacles</h6>
+                <a href="#" class="btn btn-secondary btn-sm" id="btn_o" onclick="menuButton('o')">Add obstacle</a>
+            </div>
+        </div>
+
+
+        <div class="card">
+          <div class="card-body">
+            <h6>Model information</h6>
             <a class="badge badge-success" id="model_info_goal_reached">Goal reached generation: -</a><br>
             <a class="badge badge-info" id="model_info_score">Current score: -</a><br>
             <!-- <a class="badge badge-secondary" id="model_info_gobal_best_score">bbs</a><br> -->
-            <a class="badge badge-danger" id="model_info_gen">Current generation: -</a><br>
+            <a class="badge badge-secondary" id="model_info_gen" style="color: white;">Current generation: -</a><br>
             <a class="badge badge-warning" id="model_info_species"># species: -</a><br>
 
           </div>
@@ -91,27 +103,37 @@
 
         <div class="card">
           <div class="card-body">
-            <h5>Champions</h5>
-            <p href="#" class="btn btn-primary" id="btn_rb" onclick="menuButton('rb')">run best</p>
-            <p href="#" class="btn btn-primary" id="btn_g" onclick="menuButton('g')">
-              generation summary
-            </p>
+            <h6>Graphics</h6>
+            <input class="btn btn-primary" type="checkbox" id="btn_n" name="renderDots" onclick="menuButton('renderdotstoggle')" checked="true">
+            <label for="renderDots">Render dots</label>
+            <small><small>(speeds up processing)</small></small>
+            <br>
+
+            <!-- <input class="btn btn-primary" type="checkbox" id="btn_n" name="showSeesGoal" onclick="menuButton('showSeesGoal')" checked="false">
+            <label for="showSeesGoal">Show sees goal</label>
+            <br> -->
+
+            <!-- <input class="btn btn-primary" type="checkbox" id="inp_sensorgraphics" name="sensorgraphics" onclick="menuButton('sensorgraphics')">
+            <label for="sensorgraphics">Sensor graphics</label> -->
           </div>
         </div>
 
+
         <div class="card">
           <div class="card-body">
-            <h5>Graphics</h5>
-            <!-- <p href="#" class="btn btn-primary" id="btn_n" onclick="menuButton('n')">Hide graphics</p> -->
-            
+            <h6>Replays</h6>
+            <a href="#" class="btn btn-secondary btn-sm" id="btn_rb" onclick="menuButton('rb')">Show champion</a>
             <br>
-            <input class="btn btn-primary" type="checkbox" id="btn_n" name="toggleGraphics" onclick="menuButton('n')">
-            <label for="toggleGraphics">toggle graphics</label>
+            <small><small>Shows the current best performing Dot</small></small> 
+
+            <hr>
+
+            <a href="#" class="btn btn-secondary btn-sm" id="btn_g" onclick="menuButton('g')">Generations</a>
             <br>
-            <input class="btn btn-primary" type="checkbox" id="inp_sensorgraphics" name="sensorgraphics" onclick="menuButton('sensorgraphics')">
-            <label for="sensorgraphics">Sensor graphics</label>
+            <small><small>Looping through each generation's best performing Dot</small></small>
           </div>
         </div>
+
 
         
 
@@ -127,6 +149,37 @@
         <span class="slider round"></span>
         </label> -->
     </div>
+
+    <div style="position: absolute; width: 280px; height: 20vh; right: 0px; bottom: 0px; overflow-y: scroll;">
+        <div class="card">
+            <div class="card-body">
+                <h5>About</h5>
+                <a class="badge badge-info" style="cursor: pointer; color: white;"
+                data-toggle="modal" data-target="#basicExampleModal">
+                   Instructions
+                </a>
+
+                <br>
+
+                <a class="badge" style="cursor: pointer; background-color: black; color: white;" 
+                href="https://mikehuls.medium.com/" target="_blank">
+                    How this algorithm works
+                </a>
+
+                <br>
+
+
+                <a class="badge badge-success" style="cursor: pointer; color: white;" 
+                href="https://github.com/mike-huls" target="_blank">
+                    About Author
+                </a>
+
+                <br>
+                
+            </div>
+        </div>
+    </div>
+
 
 </body>
 
