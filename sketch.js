@@ -58,7 +58,7 @@ function draw() {
 
 
   // Clear --> background color
-  background('rgb(220, 220, 220)');
+  background('rgb(240, 240, 240)');
 
 
   // FOR DRAWING OBSTACLES

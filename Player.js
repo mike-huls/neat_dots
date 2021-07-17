@@ -217,11 +217,6 @@ class Player {
                 stroke('rgb(0,255,0)');
                 strokeWeight(1);
                 line(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
-            } else {
-                stroke('rgb(255, 100, 25)');
-                strokeWeight(1);
-                console.log(_seesGoal);
-                // line(this.pos.x, this.pos.y, _seesGoal.x, _seesGoal.y);
             }
         }
 
