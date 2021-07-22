@@ -58,8 +58,10 @@ function draw() {
 
 
   // Clear --> background color
-  background('rgb(240, 240, 240)');
+  if (frameCount % Settings.skipRenderFrameCount != 0) {
 
+    background('rgb(240, 240, 240)');
+  }
 
   // FOR DRAWING OBSTACLES
   if (mousedown) {

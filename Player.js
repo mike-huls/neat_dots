@@ -124,6 +124,10 @@ class Player {
             return;
         }
 
+        if (frameCount % Settings.skipRenderFrameCount == 0) {
+            return;
+        }
+
         let the_fill;
         if (!this.dead) {
             if (this.seesGoal) {
