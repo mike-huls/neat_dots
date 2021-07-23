@@ -293,14 +293,14 @@ class Player {
 
         let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
         if (this.hasSeenGoal) {
-            fitness = 1.0 / (distanceToGoal * distanceToGoal);
+            fitness = 5.0 / (distanceToGoal * distanceToGoal);
             if (this.seesGoal) {
                 // Sees goal bonus
-                fitness = fitness + 0.1;
+                fitness = fitness * 1.1;
             }
             if (this.reachedGoal) {
                 // Reached goad bonus
-                fitness = fitness + 0.3;
+                fitness = fitness * 1.3;
             }
         } else {
             // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision
