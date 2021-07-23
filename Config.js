@@ -1,10 +1,10 @@
 const Settings = {
-  InitialPopulation: 400,
+  InitialPopulation: 500,
   renderDots: true,
   
   skipRender: true,
   skipRenderFrameCount: 5,
   
-  showSensors: true,
+  showSensors: false,
   showSeesGoal: false
 }

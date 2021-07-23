@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Dots Neuro AI</title>
-    <link rel="stylesheet" type="text/css" href="css/page.css">
     <link rel="stylesheet" type="text/css" href="css/button.css">
     <link rel="stylesheet" type="text/css" href="css/toggle.css">
 </head>
@@ -104,9 +103,11 @@
         <div class="card">
           <div class="card-body">
             <h6>Graphics</h6>
-            <input class="btn btn-primary" type="checkbox" id="btn_n" name="renderDots" onclick="menuButton('renderdotstoggle')" checked="true">
-            <label for="renderDots">Render dots</label>
-            <small><small>(speeds up processing)</small></small>
+            <input class="btn btn-primary" type="checkbox" id="btn_n" name="renderDots" onclick="menuButton('renderdotstoggle')">
+            <label for="renderDots">
+                <small>Hide dots</small>
+                <small><small>(for faster rendering)</small></small>
+            </label>
             <br>
 
             <!-- <input class="btn btn-primary" type="checkbox" id="btn_n" name="showSeesGoal" onclick="menuButton('showSeesGoal')" checked="false">
@@ -114,7 +115,9 @@
             <br> -->
 
             <input class="btn btn-primary" type="checkbox" id="inp_sensorgraphics" name="sensorgraphics" onclick="menuButton('sensorgraphics')">
-            <label for="sensorgraphics">Sensor graphics</label>
+            <label for="sensorgraphics">
+                <small>Show Sensor graphics</small>
+            </label>
           </div>
         </div>
 

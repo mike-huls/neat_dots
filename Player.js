@@ -39,6 +39,9 @@ class Player {
     // Neat
     isBest = false;
 
+    // Test
+    rays = [];
+
     constructor() {
 
         // <---------------------------------------------------------------------Settings
@@ -98,7 +101,7 @@ class Player {
     }
     checkCollisions() {
 
-        // collide with obstacle
+        // dot collide with obstacle
         if (obstacles.coord_in_obstacle(this.pos.x, this.pos.y, this.diameter)) {
             this.collidedWithObstacle = true;
             this.dead = true;
@@ -130,8 +133,10 @@ class Player {
 
         let the_fill;
         if (!this.dead) {
-            if (this.seesGoal) {
-                the_fill = 'rgb(255,127,80)';
+            if (Settings.showSeesGoal && this.seesGoal) {
+                if (this.seesGoal) {
+                    the_fill = 'rgb(255,127,80)';
+                }
             } else {
                 the_fill = 'rgb(100, 100, 100)';
             }
@@ -140,6 +145,9 @@ class Player {
         }
         fill(the_fill);
         ellipse(this.pos.x, this.pos.y, this.diameter / 2, this.diameter / 2);
+        let _dir = p5.Vector.fromAngle(radians(this.direction), 100);  
+        line(this.pos.x, this.pos.y, this.pos.x+_dir.x, this.pos.y+_dir.y);
+
     }
     //---------------------------------------------------------------------------------------------------------
 
@@ -160,61 +168,32 @@ class Player {
             this.seesGoal = false;
         }
 
+        stroke('black');
+        let objectDistanceArray = Array(8).fill(null);
+        let dirArray = [1, 2, 3, 4, 5, 6, 7, 8];
+        dirArray.forEach(d => {
+            let _dir = p5.Vector.fromAngle(radians(this.direction + (360/8*d)), this.visionRange);  
+            let obst_hit = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x+_dir.x, this.pos.y+_dir.y);
+            if (obst_hit) {
+                let obst_hit_d_norm = obst_hit ? 1 - (obst_hit.distance / this.visionRange) : 0;
+                objectDistanceArray[d] = obst_hit_d_norm;
+                                
+                // Graphics
+                if (Settings.showSensors) {
+                    if (obst_hit_d_norm < 0.33) {
+                        stroke('yellow');
+                    } else if (obst_hit_d_norm < 0.66) {
+                        stroke('orange');
+                    } else {
+                        stroke('red');
+                    }
+                    line(this.pos.x, this.pos.y, obst_hit.x, obst_hit.y);
+                }
+            }
+        });
 
-        // Check collision
-        let sees_obst_n = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.visionRange);
-        let sees_obst_e = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x + this.visionRange, this.pos.y);
-        let sees_obst_s = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x, this.pos.y + this.visionRange);
-        let sees_obst_w = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x - this.visionRange, this.pos.y);
 
-        let sees_obst_ne = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y - this.visionRange_diag);
-        let sees_obst_se = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y + this.visionRange_diag);
-        let sees_obst_nw = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y - this.visionRange_diag);
-        let sees_obst_sw = obstacles.line_through_obstacle(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y + this.visionRange_diag);
-
-
-        // Normalize distance to obstacle
-        let sees_obst_n_dist = sees_obst_n ? 1 - (sees_obst_n.distance / this.visionRange) : 0;
-        let sees_obst_e_dist = sees_obst_e ? 1 - (sees_obst_e.distance / this.visionRange) : 0;
-        let sees_obst_s_dist = sees_obst_s ? 1 - (sees_obst_s.distance / this.visionRange) : 0;
-        let sees_obst_w_dist = sees_obst_w ? 1 - (sees_obst_w.distance / this.visionRange) : 0;
-
-        let sees_obst_ne_dist = sees_obst_ne ? 1 - (sees_obst_ne.distance / this.visionRange) : 0;
-        let sees_obst_se_dist = sees_obst_se ? 1 - (sees_obst_se.distance / this.visionRange) : 0;
-        let sees_obst_nw_dist = sees_obst_nw ? 1 - (sees_obst_nw.distance / this.visionRange) : 0;
-        let sees_obst_sw_dist = sees_obst_sw ? 1 - (sees_obst_sw.distance / this.visionRange) : 0;
-        
-
-        // Show sensor graphics?
-        if (Settings.showSensors) {
-            stroke(0,0,0)
-
-            stroke(1 - sees_obst_n_dist * 100);
-            // sees_obst_n ? stroke(255,127,80) : stroke(0,0,0)
-            line(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.visionRange);
-            stroke(sees_obst_e_dist * 100);
-            // sees_obst_e ? stroke(255,127,80) : stroke(0,0,0)
-            line(this.pos.x, this.pos.y, this.pos.x + this.visionRange, this.pos.y);
-            // sees_obst_s ? stroke(255,127,80) : stroke(0,0,0)
-            stroke(sees_obst_s_dist * 100);
-            line(this.pos.x, this.pos.y, this.pos.x, this.pos.y + this.visionRange);
-            // sees_obst_w ? stroke(255,127,80) : stroke(0,0,0)
-            stroke(sees_obst_w_dist * 100);
-            line(this.pos.x, this.pos.y, this.pos.x - this.visionRange, this.pos.y);
-            // sees_obst_ne ? stroke(255,127,80) : stroke(0,0,0)
-            stroke(sees_obst_ne_dist * 100);
-            line(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y - this.visionRange_diag);
-            // sees_obst_se ? stroke(255,127,80) : stroke(0,0,0)
-            stroke(sees_obst_se_dist * 100);
-            line(this.pos.x, this.pos.y, this.pos.x + this.visionRange_diag, this.pos.y + this.visionRange_diag);
-            // sees_obst_nw ? stroke(255,127,80) : stroke(0,0,0)
-            stroke(sees_obst_nw_dist * 100);
-            line(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y - this.visionRange_diag);
-            // sees_obst_sw ? stroke(255,127,80) : stroke(0,0,0)
-            stroke(sees_obst_sw_dist * 100);
-            line(this.pos.x, this.pos.y, this.pos.x - this.visionRange_diag, this.pos.y + this.visionRange_diag);
-        }
-
+      
         
         if (Settings.showSeesGoal) {
             if (this.seesGoal) {
@@ -225,23 +204,17 @@ class Player {
         }
 
 
-
-
-        // Set
-        // UPDATE IN Genome.js
-        // Check for INPUT NODES
-        this.vision[0] = sees_obst_n_dist;
-        this.vision[1] = sees_obst_e_dist;
-        this.vision[2] = sees_obst_s_dist;
-        this.vision[3] = sees_obst_w_dist;
-
-        this.vision[4] = sees_obst_ne_dist;
-        this.vision[5] = sees_obst_se_dist;
-        this.vision[6] = sees_obst_nw_dist;
-        this.vision[7] = sees_obst_sw_dist;
+        this.vision[0] = objectDistanceArray[0];
+        this.vision[1] = objectDistanceArray[1];
+        this.vision[2] = objectDistanceArray[2];
+        this.vision[3] = objectDistanceArray[3];
+        this.vision[4] = objectDistanceArray[4];
+        this.vision[5] = objectDistanceArray[5];
+        this.vision[6] = objectDistanceArray[6];
+        this.vision[7] = objectDistanceArray[7];
 
         this.vision[8] = this.seesGoal;
-        this.vision[9] = this.direction / 360;
+        this.vision[9] = null;// this.direction / 360;
     }
     accelerate() {
         let curMag = this.vel.mag();
