@@ -110,6 +110,9 @@ class Player {
         if (obstacles.coord_in_obstacle(this.pos.x, this.pos.y, this.diameter)) {
             this.collidedWithObstacle = true;
             this.dead = true;
+            if (this.seesGoal) {
+                this.fitness = this.fitness + 1000;
+            }
         }
 
         // Collide with goal
@@ -267,35 +270,70 @@ class Player {
         
         // let spawnDist = 0.3 * (distFromSpawn / this.maxSteps);
 
+        /* Goal: 
+            - goal not reached: survive as long as possible; take as many as possible steps
+            - goal is reached:  reach again in as few as possible steps
+        */
 
-        // console.log(seesGoalScore + goalDist + reachedGoal + collidedObstacle);
-        // let fitness = seesGoalScore + goalDist + reachedGoal + collidedObstacle;
-        // let fitness = collidedObstacle + walkratio + seesGoalScore + reachedGoal; 
-        // let fitness = goalDistScore + collidedObstacle + seesGoalScore;
-        let fitness = 0;
-
+        let fitness = this.fitness;
+        console.log('fitness start', this.fitness);
 
         let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
+
         if (this.hasSeenGoal) {
-            fitness = 5.0 / (distanceToGoal * distanceToGoal);
+            // HasSeenGoalBonus
+            fitness = fitness + 250;
+
+            // closer to goal is better
+
+
             if (this.seesGoal) {
                 // Sees goal bonus
                 fitness = fitness * 1.1;
             }
             if (this.reachedGoal) {
                 // Reached goad bonus
+                fitness = fitness + (250 / (distanceToGoal * distanceToGoal));
                 fitness = fitness * 1.3;
                 fitness = fitness + (this.maxSteps - this.takenSteps) / 10;
             }
         } else {
             // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision
-            // Fitness ==> |-1, 0|
-            fitness = 0 - (distFromSpawn / this.maxSteps);
+            fitness = fitness + this.takenSteps + distFromSpawn;// (distFromSpawn / this.maxSteps);
             if (this.collidedWithObstacle) {
                 // collided fine
-                fitness = fitness - 0.5;
+                fitness = fitness * 0.8;
             }
         }
+
+        if (distFromSpawn == 0) {
+            fitness = -1;
+        }
+
+        // let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
+        // if (this.hasSeenGoal) {
+        //     // Has seen goal bonus
+        //     fitness = fitness + this.maxSteps;
+        //     // if (this.seesGoal) {
+        //         // Sees goal bonus
+        //         // fitness = fitness * 1.1;
+        //     // }
+        //     if (this.reachedGoal) {
+        //         // Reached goad bonus
+        //         fitness = fitness * 1.3;
+        //     }
+        //     fitness = fitness + (this.maxSteps - this.takenSteps) / 10;
+        //     // fitness = this.maxSteps + 5.0 / (distanceToGoal * distanceToGoal);
+        // } else {
+        //     // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision
+        //     // Fitness ==> |-1, 0|
+        //     fitness = -this.maxSteps + distFromSpawn;
+        //     // fitness = 0 + (distFromSpawn / this.maxSteps);
+        //     if (this.collidedWithObstacle) {
+        //         // collided fine
+        //         fitness = this.takenSteps * 0.8;
+        //     }
+        // }
 
         return fitness;
     }

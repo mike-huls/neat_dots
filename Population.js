@@ -91,7 +91,7 @@ class Population {
 
 
     var averageSum = this.getAvgFitnessSum();
-    // console.log('average sum', averageSum);
+
     var children = [];
     for (var j = 0; j < this.species.length; j++) { //for each this.species
       children.push(this.species[j].champ.clone()); //add champion without any mutation
@@ -108,8 +108,6 @@ class Population {
     }
 
     this.players = [];
-    // print('players' + this.species.length + 'children' + children.length);
-
     arrayCopy(children, this.players); //set the children as the current this.playersulation
     this.gen += 1;
     for (var i = 0; i < this.players.length; i++) { //generate networks for each of the children

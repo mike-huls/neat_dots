@@ -282,6 +282,7 @@ class Genome {
   
   //mutates the genome
   mutate(innovationHistory) {
+
     if (this.genes.length == 0) {
       this.addConnection(innovationHistory);
     }
@@ -482,12 +483,12 @@ class Genome {
       textSize(10);
       fill(0);
       textAlign(CENTER, CENTER);
-      if (i <= 10 || i >= (nodePoses.length - 2)) {
+      if (i <= 9 || i >= (nodePoses.length - 2)) {
         // draw with text
         text(`${i} ${this.vision_labels[nodeNumbers[i]]}`, nodePoses[i].x, nodePoses[i].y);
       } else {
         // draw without text
-        text(nodeNumbers[i], nodePoses[i].x, nodePoses[i].y);
+        text(`${i}`, nodePoses[i].x, nodePoses[i].y);
       }
     }
   }

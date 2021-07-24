@@ -1,5 +1,5 @@
 const Settings = {
-  InitialPopulation: 500,
+  InitialPopulation: 10,
   renderDots: true,
   
   skipRender: true,
