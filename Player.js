@@ -61,9 +61,14 @@ class Player {
         this.score = 0;
         this.gen = 0;
 
-        this.genomeInputs = 10;
+        this.genomeInputs = 9; // bias gets added automaticaly. Set lables in genome
         this.genomeOutputs = 2;
         this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
+
+        // random direction
+        this.direction = Math.floor(Math.random() * 90) + 180;
+        // random acceleration
+        this.move();
     }
 
     //RENDERING--------------------------------------------------------------------------------------------------
@@ -218,16 +223,18 @@ class Player {
         this.vision[7] = objectDistanceArray[7];
 
         this.vision[8] = this.seesGoal;
-        this.vision[9] = null;// this.direction / 360;
     }
     accelerate() {
         let curMag = this.vel.mag();
         if (curMag==0) {
-            this.acc.setMag(this.maxAcceleration);
-        } else if (curMag + this.maxAcceleration >= this.maxSpeed) {
+            this.acc.setMag(this.accelerationSpeed);
+            // this.acc.setMag(this.maxAcceleration);
+        // } else if (curMag + this.maxAcceleration >= this.maxSpeed) {
+        } else if (curMag + this.accelerationSpeed >= this.maxSpeed) {
             this.acc.setMag(this.maxSpeed);
         } else {
-            this.acc.setMag(curMag + this.maxAcceleration);
+            // this.acc.setMag(curMag + this.maxAcceleration);
+            this.acc.setMag(curMag + this.accelerationSpeed);
         }
     }
     decelerate() {
@@ -278,6 +285,7 @@ class Player {
             if (this.reachedGoal) {
                 // Reached goad bonus
                 fitness = fitness * 1.3;
+                fitness = fitness + (this.maxSteps - this.takenSteps) / 10;
             }
         } else {
             // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision

@@ -1,6 +1,6 @@
 class Genome {
   
-  vision_labels = ['up', 'left', 'down', 'right', 'n-e', 's-e', 'n-w', 's-w', 'seesgoal', 'direction', 'steering', 'accelerating', 'bias'];
+  vision_labels = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'seesgoal', 'steering', 'accelerating', 'bias'];
 
   constructor(inputs, outputs, crossover) {
     this.genes = []; //a list of connections between this.nodes which represent the NN
@@ -184,7 +184,7 @@ class Genome {
   addConnection(innovationHistory) {
     //cannot add a connection to a fully connected network
     if (this.fullyConnected()) {
-      console.log("connection failed");
+      console.log("Genome.addConnection: connection failed; fully connected");
       return;
     }
 
