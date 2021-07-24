@@ -145,8 +145,12 @@ class Player {
         }
         fill(the_fill);
         ellipse(this.pos.x, this.pos.y, this.diameter / 2, this.diameter / 2);
-        let _dir = p5.Vector.fromAngle(radians(this.direction), 100);  
-        line(this.pos.x, this.pos.y, this.pos.x+_dir.x, this.pos.y+_dir.y);
+        let _dir1 = p5.Vector.fromAngle(radians(this.direction), 25);  
+        // let _dir1 = p5.Vector.fromAngle(radians(this.direction + (360/8*8)), 100);  
+        // let _dir2 = p5.Vector.fromAngle(radians(this.direction + (360/8*5)), 100);  
+        // TODO: create a cape?
+        line(this.pos.x, this.pos.y, this.pos.x+_dir1.x, this.pos.y+_dir1.y);
+        // line(this.pos.x, this.pos.y, this.pos.x+_dir2.x, this.pos.y+_dir2.y);
 
     }
     //---------------------------------------------------------------------------------------------------------
