@@ -21,6 +21,7 @@ class Player {
     maxSpeed = 10;
     maxSteps = 250;
     takenSteps = 0;
+    timeAlive = 0;
 
     // Status
     pos;
@@ -30,6 +31,7 @@ class Player {
     seesGoal = false;
     hasSeenGoal = false;
     reachedGoal = false;
+    deadSeeingGoal = false;
     collidedWithObstacle = false;
 
     // Settings
@@ -77,7 +79,7 @@ class Player {
             this.move();
             this.checkCollisions();
         }
-        if (this.takenSteps >= this.maxSteps) {
+        if (this.timeAlive >= this.maxSteps) {
             this.dead = true;
         }
         this.score = this.fitness;
@@ -102,7 +104,10 @@ class Player {
 
         // Actually move
         this.pos.add(this.vel);
-        this.takenSteps++;
+        if (this.vel.mag() > 0) {
+            this.takenSteps++;
+        }
+        this.timeAlive++;
     }
     checkCollisions() {
 
@@ -111,21 +116,15 @@ class Player {
             this.collidedWithObstacle = true;
             this.dead = true;
             if (this.seesGoal) {
-                this.fitness = this.fitness + 1000;
+                this.deadSeeingGoal = true;
             }
         }
 
         // Collide with goal
         let d = dist(this.pos.x, this.pos.y, goal.pos.x, goal.pos.y);
-        
         if (d <= this.diameter / 2 + goal.diameter / 2) {
             this.reachedGoal = true;
             this.dead = true;
-            this.fitness = this.fitness * 1.5;
-            if (!goal.isReached) {
-                goal.isReachedGeneration = population.gen;
-            }
-
             goal.isReached = true;
 
         }
@@ -139,17 +138,25 @@ class Player {
             return;
         }
 
-        let the_fill;
-        if (!this.dead) {
-            if (Settings.showSeesGoal && this.seesGoal) {
-                if (this.seesGoal) {
-                    the_fill = 'rgb(255,127,80)';
+        let the_fill = 'rgb(100, 100, 100)';
+
+        if (Settings.showDotState) {
+            if (this.dead) {
+                // DEAD
+                if (this.deadSeeingGoal) {
+                    the_fill = 'rgb(216,191,216)';
+                } else {
+                    the_fill = 'rgb(255, 0, 0)';
+
                 }
             } else {
-                the_fill = 'rgb(100, 100, 100)';
+                // Alive
+                if (this.seesGoal) {
+                    the_fill = 'rgb(255,127,80)';
+                } else if (this.hasSeenGoal) {
+                    the_fill = 'rgb(30,144,255)';
+                }
             }
-        } else {
-            the_fill = 'rgb(255, 0, 0)';
         }
         fill(the_fill);
         ellipse(this.pos.x, this.pos.y, this.diameter / 2, this.diameter / 2);
@@ -275,41 +282,72 @@ class Player {
             - goal is reached:  reach again in as few as possible steps
         */
 
-        let fitness = this.fitness;
-        console.log('fitness start', this.fitness);
+        // let fitness = this.fitness;
 
+        // let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
+        // if (this.hasSeenGoal) {
+        //     // HasSeenGoalBonus
+        //     fitness = fitness + 250;
+
+        //     // closer to goal is better
+
+
+        //     if (this.seesGoal) {
+        //         // Sees goal bonus
+        //         fitness = fitness * 1.1;
+        //     }
+        //     if (this.reachedGoal) {
+        //         // Reached goad bonus
+        //         fitness = fitness + (250 / (distanceToGoal * distanceToGoal));
+        //         fitness = fitness * 1.3;
+        //         fitness = fitness + (this.maxSteps - this.takenSteps) / 10;
+        //     }
+        // } else {
+        //     // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision
+        //     fitness = fitness + this.takenSteps + distFromSpawn;// (distFromSpawn / this.maxSteps);
+        //     if (this.collidedWithObstacle) {
+        //         // collided fine
+        //         fitness = fitness * 0.8;
+        //     }
+        // }
+
+        /* NEW zzzz */
+        let fitness = 0;
+        let BONUS_HASSEENGOAL = 1000;
+        let BONUS_DEADSEEINGGOAL = 0; //--> glitch through - check collision in obstacle
+        let BONUS_REACHEDGOAL = 2500;
         let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
-
+        // exploration -> take as many steps and move away from spawn
+        // |0,1000|     -1000 if not moved
+        fitness = (this.takenSteps / this.maxSteps) * BONUS_HASSEENGOAL;
         if (this.hasSeenGoal) {
-            // HasSeenGoalBonus
-            fitness = fitness + 250;
-
-            // closer to goal is better
-
-
-            if (this.seesGoal) {
-                // Sees goal bonus
-                fitness = fitness * 1.1;
-            }
-            if (this.reachedGoal) {
-                // Reached goad bonus
-                fitness = fitness + (250 / (distanceToGoal * distanceToGoal));
-                fitness = fitness * 1.3;
-                fitness = fitness + (this.maxSteps - this.takenSteps) / 10;
-            }
-        } else {
-            // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision
-            fitness = fitness + this.takenSteps + distFromSpawn;// (distFromSpawn / this.maxSteps);
-            if (this.collidedWithObstacle) {
-                // collided fine
-                fitness = fitness * 0.8;
-            }
+            fitness = fitness + BONUS_HASSEENGOAL;
         }
+        fitness = fitness + (windowWidth - distanceToGoal)^2;
+        if (this.deadSeeingGoal) {
+            fitness = fitness + BONUS_DEADSEEINGGOAL;
+
+        }
+        if (this.reachedGoal) {
+            fitness = fitness + BONUS_REACHEDGOAL;
+        }
+
+
+
 
         if (distFromSpawn == 0) {
-            fitness = -1;
+            fitness = 0;
         }
 
+
+
+
+        // console.log('ts', this.takenSteps, 'mx', this.maxSteps, 'f', fitness)
+
+        /* / NEW */
+
+        
+        /* BAK */
         // let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
         // if (this.hasSeenGoal) {
         //     // Has seen goal bonus
@@ -320,20 +358,24 @@ class Player {
         //     // }
         //     if (this.reachedGoal) {
         //         // Reached goad bonus
-        //         fitness = fitness * 1.3;
+        //         fitness = fitness + 10000;
         //     }
         //     fitness = fitness + (this.maxSteps - this.takenSteps) / 10;
         //     // fitness = this.maxSteps + 5.0 / (distanceToGoal * distanceToGoal);
         // } else {
         //     // Has not seen goal ==> SEARCH: walk as far as possible from spawn without collision
         //     // Fitness ==> |-1, 0|
-        //     fitness = -this.maxSteps + distFromSpawn;
+        //     fitness = this.takenSteps;
         //     // fitness = 0 + (distFromSpawn / this.maxSteps);
         //     if (this.collidedWithObstacle) {
         //         // collided fine
-        //         fitness = this.takenSteps * 0.8;
+        //         // fitness = this.takenSteps * 0.8;
         //     }
         // }
+        // if (distFromSpawn == 0) {
+        //     fitness = -1;
+        // }
+        /* / BAK */
 
         return fitness;
     }
@@ -397,7 +439,7 @@ class Player {
         //this fuction does that
         var clone = new Player();
         clone.brain = this.brain.clone();
-        clone.fitness = this.fitness;
+        clone.fitness = this.getFitness();
         clone.brain.generateNetwork();
         clone.gen = this.gen;
         clone.bestScore = this.score;
@@ -405,7 +447,6 @@ class Player {
     }
     calculateFitness() {
         //fot Genetic algorithm
-        
         this.fitness =  this.getFitness();
     }
     crossover(parent2) {

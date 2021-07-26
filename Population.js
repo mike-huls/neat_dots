@@ -52,11 +52,12 @@ class Population {
     tempBest.gen = this.gen;
 
     //if best thisthis.gen is better than the global best score then set the global best as the best thisthis.gen
-    if (tempBest.score >= this.bestScore || this.bestPlayer == null) {
+    let tempBestFitness = tempBest.getFitness();
+    if (tempBestFitness >= this.bestScore || this.bestPlayer == null) {
       this.genPlayers.push(tempBest.cloneForReplay());
       // console.log("old best: " + this.bestScore);
       // console.log("new best: " + tempBest.score);
-      this.bestScore = tempBest.score;
+      this.bestScore = tempBestFitness;
       this.bestPlayer = tempBest.cloneForReplay();
     }
   }
