@@ -22,6 +22,7 @@ class Population {
   updateAlive() {
     for (var i = 0; i < this.players.length; i++) {
       if (!this.players[i].dead) {
+        this.players[i].gen = this.gen;
         this.players[i].look(); //get inputs for brain
         this.players[i].think(); //use outputs from neural network
         this.players[i].update(); //move the player according to the outputs from the neural network
@@ -111,6 +112,7 @@ class Population {
     this.players = [];
     arrayCopy(children, this.players); //set the children as the current this.playersulation
     this.gen += 1;
+    console.log(this.gen)
     for (var i = 0; i < this.players.length; i++) { //generate networks for each of the children
       this.players[i].brain.generateNetwork();
     }

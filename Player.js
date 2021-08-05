@@ -41,8 +41,6 @@ class Player {
     // Neat
     isBest = false;
 
-    // Test
-    rays = [];
 
     constructor() {
 
@@ -126,6 +124,8 @@ class Player {
             this.reachedGoal = true;
             this.dead = true;
             goal.isReached = true;
+            goal.isReachedGeneration = this.gen;
+            console.log("****************************");
 
         }
     }
@@ -315,21 +315,40 @@ class Player {
         let fitness = 0;
         let BONUS_HASSEENGOAL = 1000;
         let BONUS_DEADSEEINGGOAL = 0; //--> glitch through - check collision in obstacle
-        let BONUS_REACHEDGOAL = 2500;
+        let BONUS_EXPIRED_SEEING_GOAL = 2500;
+        let BONUS_REACHEDGOAL = 5000;
+
         let distFromSpawn = dist(this.pos.x, this.pos.y, this.spawnX, this.spawnY);
         // exploration -> take as many steps and move away from spawn
         // |0,1000|     -1000 if not moved
-        fitness = (this.takenSteps / this.maxSteps) * BONUS_HASSEENGOAL;
-        if (this.hasSeenGoal) {
-            fitness = fitness + BONUS_HASSEENGOAL;
+
+        if (!this.hasSeenGoal) {
+            // Exploration
+            fitness = (this.takenSteps / this.maxSteps) * BONUS_HASSEENGOAL;
         }
-        fitness = fitness + (windowWidth - distanceToGoal)^2;
-        if (this.deadSeeingGoal) {
-            fitness = fitness + BONUS_DEADSEEINGGOAL;
+        if (this.hasSeenGoal) {
+            // min distance from goal
+            fitness = BONUS_HASSEENGOAL;
+            // fitness = fitness + (windowWidth - distanceToGoal)^2;
+            fitness = fitness + abs((windowWidth - distanceToGoal)^2);
+
+            
+
+            if (this.deadSeeingGoal) {
+                // fitness = fitness + BONUS_DEADSEEINGGOAL;
+                // fitness = fitness + (windowWidth - distanceToGoal)^2;
+            }
 
         }
+        if (!this.collidedWithObstacle && this.seesGoal) {
+            fitness = fitness + BONUS_EXPIRED_SEEING_GOAL;
+        }
         if (this.reachedGoal) {
+            // Fastest way to goal
             fitness = fitness + BONUS_REACHEDGOAL;
+            fitness = fitness + (this.maxSteps - this.takenSteps);
+
+
         }
 
 
